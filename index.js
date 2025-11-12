@@ -94,7 +94,7 @@ app.use(express.urlencoded({ extended: true }));
   setupMasqr(app);
 } */
 
-app.use(express.static(path.join(__dirname, "totallynotthefrontendtrust")));
+app.use(express.static(path.join(__dirname, "mango")));
 app.use("/fq", cors({ origin: true }));
 
 const routes = [
@@ -117,17 +117,17 @@ const routes = [
 // biome-ignore lint/complexity/noForEach:
 routes.forEach((route) => {
   app.get(route.path, (_req, res) => {
-    res.sendFile(path.join(__dirname, "totallynotthefrontendtrust", route.file));
+    res.sendFile(path.join(__dirname, "mango", route.file));
   });
 });
 
 app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, "totallynotthefrontendtrust", "404.html"));
+  res.status(404).sendFile(path.join(__dirname, "mango", "404.html"));
 });
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).sendFile(path.join(__dirname, "totallynotthefrontendtrust", "404.html"));
+  res.status(500).sendFile(path.join(__dirname, "mango", "404.html"));
 });
 
 server.on("request", (req, res) => {
@@ -147,9 +147,8 @@ server.on("upgrade", (req, socket, head) => {
 });
 
 server.on("listening", () => {
-  console.log(chalk.whiteBright("✅ skryptonite server ready at:"), chalk.cyan(`http://localhost:${PORT}`));
+  console.log(chalk.whiteBright("✅ GU server ready at:"), chalk.cyan(`http://localhost:${PORT}`));
 });
   console.log(chalk.white("✅ Server is fully operational and ready to accept connections!"));
   console.log(chalk.red("Removed pnpm-lock.yaml because of some deploying issues"));
 server.listen({ port: PORT });
-// @razzlerazing2: "You don't got rizz u got soda fizz" Audience: "OHHHHHHHHHH ROAST W @razzlerazing2"
