@@ -1,5 +1,5 @@
 self.__uv$config = {
-	prefix: "/skibidi/sigma/",
+	prefix: "/s/kibidi/sigma/",
 	bare: "/fq/",
 	encodeUrl: Ultraviolet.codec.xor.encode,
 	decodeUrl: Ultraviolet.codec.xor.decode,
