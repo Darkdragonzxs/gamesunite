@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Games Unite V2</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         * {
             margin: 0;
@@ -17,6 +17,8 @@
             background: linear-gradient(135deg, #0a1929 0%, #1a2f4a 50%, #0d1b2a 100%);
             min-height: 100vh;
             color: white;
+            display: flex;
+            flex-direction: column;
         }
 
         .navbar {
@@ -28,13 +30,14 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             border-bottom: 3px solid #1e5a9e;
+            z-index: 10;
         }
 
         .logo {
             font-size: 1.5rem;
             font-weight: 900;
             color: #3b82f6;
-            text-shadow: 
+            text-shadow:
                 3px 3px 0px #1e40af,
                 -1px -1px 0px #1e40af,
                 1px -1px 0px #1e40af,
@@ -70,7 +73,7 @@
             background: rgba(30, 90, 158, 0.3);
             border: 2px solid #1e5a9e;
             font-weight: 700;
-            text-shadow: 
+            text-shadow:
                 2px 2px 0px #0a1929,
                 -1px -1px 0px #0a1929,
                 1px -1px 0px #0a1929,
@@ -91,7 +94,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 90px);
             padding: 2rem;
         }
 
@@ -100,7 +102,7 @@
             margin-bottom: 1rem;
             font-weight: 900;
             color: #3b82f6;
-            text-shadow: 
+            text-shadow:
                 4px 4px 0px #1e40af,
                 -2px -2px 0px #1e40af,
                 2px -2px 0px #1e40af,
@@ -115,7 +117,7 @@
             margin-bottom: 3rem;
             color: #60a5fa;
             font-weight: 700;
-            text-shadow: 
+            text-shadow:
                 2px 2px 0px #0a1929,
                 -1px -1px 0px #0a1929,
                 1px -1px 0px #0a1929,
@@ -129,6 +131,7 @@
             width: 100%;
             max-width: 700px;
             animation: fadeIn 1s ease;
+            margin-bottom: 2rem;
         }
 
         .search-box {
@@ -177,6 +180,16 @@
 
         .search-button:hover {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        #embed-container {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            display: none;
+            margin-bottom: 2rem;
         }
 
         @keyframes fadeInDown {
@@ -238,13 +251,18 @@
             .logo {
                 font-size: 1.2rem;
             }
+
+            #embed-container {
+                height: 60vh;
+                border-radius: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">
-            <img src="https://games-unite-v2.vercel.app/unite.png" alt="Logo"> Games Unite V2
+            <img src="https://games-unite-v2.vercel.app/unite.png" alt="Logo" /> Games Unite V2
         </div>
         <ul class="nav-links">
             <li><a href="/"><i class="fas fa-home"></i><span>Home</span></a></li>
@@ -258,34 +276,68 @@
     <div class="main-content">
         <h1 class="title">Games Unite V2</h1>
         <p class="subtitle">Hello guys</p>
-        
+
         <div class="search-container">
             <form class="search-box" id="searchForm">
-                <input 
-                    type="text" 
-                    class="search-input" 
+                <input
+                    type="text"
+                    class="search-input"
                     id="searchInput"
                     placeholder="Enter URL or search query..."
                     autofocus
-                >
+                    autocomplete="off"
+                />
                 <button type="submit" class="search-button">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
         </div>
+
+        <iframe id="embed-container" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
     </div>
 
     <script>
         const form = document.getElementById('searchForm');
         const input = document.getElementById('searchInput');
+        const iframe = document.getElementById('embed-container');
+
+        function isValidURL(str) {
+            try {
+                // Add protocol if missing to test properly
+                let url = str;
+                if (!/^https?:\/\//i.test(str)) {
+                    url = 'http://' + str;
+                }
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        }
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const query = input.value.trim();
-            
-            if (query) {
-                window.location.href = `/s/embed.html#https://${query}`;
+
+            if (!query) {
+                iframe.style.display = 'none';
+                iframe.src = '';
+                return;
             }
+
+            if (isValidURL(query)) {
+                // Prepare URL with protocol if missing
+                const embedURL = /^https?:\/\//i.test(query) ? query : 'https://' + query;
+                iframe.src = embedURL;
+            } else {
+                // Search DuckDuckGo for the query
+                const ddgSearchURL = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
+                iframe.src = ddgSearchURL;
+            }
+
+            iframe.style.display = 'block';
+            // Scroll to iframe smoothly
+            iframe.scrollIntoView({ behavior: 'smooth' });
         });
     </script>
 </body>
