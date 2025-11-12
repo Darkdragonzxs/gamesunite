@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Games Unite V2</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -17,8 +17,7 @@
             background: linear-gradient(135deg, #0a1929 0%, #1a2f4a 50%, #0d1b2a 100%);
             min-height: 100vh;
             color: white;
-            display: flex;
-            flex-direction: column;
+            overflow: hidden;
         }
 
         .navbar {
@@ -30,14 +29,13 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             border-bottom: 3px solid #1e5a9e;
-            z-index: 10;
         }
 
         .logo {
             font-size: 1.5rem;
             font-weight: 900;
             color: #3b82f6;
-            text-shadow:
+            text-shadow: 
                 3px 3px 0px #1e40af,
                 -1px -1px 0px #1e40af,
                 1px -1px 0px #1e40af,
@@ -73,7 +71,7 @@
             background: rgba(30, 90, 158, 0.3);
             border: 2px solid #1e5a9e;
             font-weight: 700;
-            text-shadow:
+            text-shadow: 
                 2px 2px 0px #0a1929,
                 -1px -1px 0px #0a1929,
                 1px -1px 0px #0a1929,
@@ -94,7 +92,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-height: calc(100vh - 90px);
             padding: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        .main-content.hidden {
+            display: none;
         }
 
         .title {
@@ -102,7 +106,7 @@
             margin-bottom: 1rem;
             font-weight: 900;
             color: #3b82f6;
-            text-shadow:
+            text-shadow: 
                 4px 4px 0px #1e40af,
                 -2px -2px 0px #1e40af,
                 2px -2px 0px #1e40af,
@@ -117,7 +121,7 @@
             margin-bottom: 3rem;
             color: #60a5fa;
             font-weight: 700;
-            text-shadow:
+            text-shadow: 
                 2px 2px 0px #0a1929,
                 -1px -1px 0px #0a1929,
                 1px -1px 0px #0a1929,
@@ -131,7 +135,6 @@
             width: 100%;
             max-width: 700px;
             animation: fadeIn 1s ease;
-            margin-bottom: 2rem;
         }
 
         .search-box {
@@ -182,14 +185,96 @@
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
         }
 
-        #embed-container {
-            width: 100%;
-            height: 80vh;
-            border: none;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            border-radius: 12px;
+        /* Browser Container */
+        .browser-container {
             display: none;
-            margin-bottom: 2rem;
+            flex-direction: column;
+            height: calc(100vh - 90px);
+            background: #0a1929;
+        }
+
+        .browser-container.active {
+            display: flex;
+        }
+
+        .browser-iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .browser-controls {
+            background: rgba(10, 25, 41, 0.95);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            border-top: 3px solid #1e5a9e;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .control-button {
+            background: rgba(30, 90, 158, 0.5);
+            border: 2px solid #1e5a9e;
+            color: #60a5fa;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .control-button:hover:not(:disabled) {
+            background: rgba(59, 130, 246, 0.5);
+            border-color: #3b82f6;
+            color: #93c5fd;
+            transform: translateY(-2px);
+        }
+
+        .control-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .url-input-container {
+            flex: 1;
+            display: flex;
+            background: #1a2f4a;
+            border-radius: 25px;
+            overflow: hidden;
+            border: 3px solid #1e5a9e;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
+            color: #93c5fd;
+            font-weight: 600;
+        }
+
+        .url-input::placeholder {
+            color: #475569;
+        }
+
+        .go-button {
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(135deg, #1e5a9e, #1e40af);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            border-left: 2px solid #0a1929;
+        }
+
+        .go-button:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
         }
 
         @keyframes fadeInDown {
@@ -252,20 +337,26 @@
                 font-size: 1.2rem;
             }
 
-            #embed-container {
-                height: 60vh;
-                border-radius: 8px;
+            .browser-controls {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .control-button {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">
-            <img src="https://games-unite-v2.vercel.app/unite.png" alt="Logo" /> Games Unite V2
+        <div class="logo" onclick="goHome()">
+            <img src="https://games-unite-v2.vercel.app/unite.png" alt="Logo"> Games Unite V2
         </div>
         <ul class="nav-links">
-            <li><a href="/"><i class="fas fa-home"></i><span>Home</span></a></li>
+            <li><a href="#" onclick="goHome(); return false;"><i class="fas fa-home"></i><span>Home</span></a></li>
             <li><a href="/games"><i class="fas fa-dice"></i><span>Games</span></a></li>
             <li><a href="/apps"><i class="fas fa-rocket"></i><span>Apps</span></a></li>
             <li><a href="/settings"><i class="fas fa-cog"></i><span>Settings</span></a></li>
@@ -273,71 +364,178 @@
         </ul>
     </nav>
 
-    <div class="main-content">
+    <div class="main-content" id="mainContent">
         <h1 class="title">Games Unite V2</h1>
         <p class="subtitle">Hello guys</p>
-
+        
         <div class="search-container">
             <form class="search-box" id="searchForm">
-                <input
-                    type="text"
-                    class="search-input"
+                <input 
+                    type="text" 
+                    class="search-input" 
                     id="searchInput"
                     placeholder="Enter URL or search query..."
                     autofocus
-                    autocomplete="off"
-                />
+                >
                 <button type="submit" class="search-button">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
         </div>
+    </div>
 
-        <iframe id="embed-container" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    <div class="browser-container" id="browserContainer">
+        <iframe id="browserIframe" class="browser-iframe"></iframe>
+        
+        <div class="browser-controls">
+            <button class="control-button" id="backBtn" onclick="goBack()" disabled>
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button class="control-button" id="forwardBtn" onclick="goForward()" disabled>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="control-button" onclick="reloadPage()">
+                <i class="fas fa-redo"></i>
+            </button>
+            
+            <div class="url-input-container">
+                <input 
+                    type="text" 
+                    class="url-input" 
+                    id="urlInput"
+                    placeholder="Enter URL or search..."
+                >
+                <button class="go-button" onclick="navigateFromUrlBar()">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        const form = document.getElementById('searchForm');
-        const input = document.getElementById('searchInput');
-        const iframe = document.getElementById('embed-container');
+        const mainContent = document.getElementById('mainContent');
+        const browserContainer = document.getElementById('browserContainer');
+        const browserIframe = document.getElementById('browserIframe');
+        const searchInput = document.getElementById('searchInput');
+        const urlInput = document.getElementById('urlInput');
+        const backBtn = document.getElementById('backBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        
+        let history = [];
+        let historyIndex = -1;
 
-        function isValidURL(str) {
+        function isValidURL(string) {
             try {
-                // Add protocol if missing to test properly
-                let url = str;
-                if (!/^https?:\/\//i.test(str)) {
-                    url = 'http://' + str;
+                // Check if it looks like a URL (has a domain with TLD)
+                const urlPattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:[0-9]+)?(\/.*)?$/;
+                const withProtocol = /^https?:\/\//;
+                
+                if (withProtocol.test(string)) {
+                    new URL(string);
+                    return true;
                 }
-                new URL(url);
-                return true;
-            } catch {
+                
+                if (urlPattern.test(string)) {
+                    new URL('https://' + string);
+                    return true;
+                }
+                
+                return false;
+            } catch (e) {
                 return false;
             }
         }
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const query = input.value.trim();
+        function addToHistory(url) {
+            // Remove any forward history when navigating to a new page
+            history = history.slice(0, historyIndex + 1);
+            history.push(url);
+            historyIndex = history.length - 1;
+            updateButtons();
+        }
 
-            if (!query) {
-                iframe.style.display = 'none';
-                iframe.src = '';
-                return;
+        function updateButtons() {
+            backBtn.disabled = historyIndex <= 0;
+            forwardBtn.disabled = historyIndex >= history.length - 1;
+        }
+
+        function goBack() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                loadUrl(history[historyIndex], false);
+                updateButtons();
             }
+        }
 
-            if (isValidURL(query)) {
-                // Prepare URL with protocol if missing
-                const embedURL = /^https?:\/\//i.test(query) ? query : 'https://' + query;
-                iframe.src = embedURL;
+        function goForward() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                loadUrl(history[historyIndex], false);
+                updateButtons();
+            }
+        }
+
+        function reloadPage() {
+            if (history[historyIndex]) {
+                browserIframe.src = browserIframe.src;
+            }
+        }
+
+        function loadUrl(input, addHistory = true) {
+            let url;
+            
+            if (isValidURL(input)) {
+                // It's a valid URL
+                url = input.startsWith('http') ? input : 'https://' + input;
             } else {
-                // Search DuckDuckGo for the query
-                const ddgSearchURL = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
-                iframe.src = ddgSearchURL;
+                // It's a search query - use DuckDuckGo
+                url = 'https://duckduckgo.com/?q=' + encodeURIComponent(input);
             }
+            
+            browserIframe.src = url;
+            urlInput.value = input;
+            
+            if (addHistory) {
+                addToHistory(url);
+            }
+            
+            // Show browser, hide main content
+            mainContent.classList.add('hidden');
+            browserContainer.classList.add('active');
+        }
 
-            iframe.style.display = 'block';
-            // Scroll to iframe smoothly
-            iframe.scrollIntoView({ behavior: 'smooth' });
+        function navigateFromUrlBar() {
+            const input = urlInput.value.trim();
+            if (input) {
+                loadUrl(input);
+            }
+        }
+
+        function goHome() {
+            mainContent.classList.remove('hidden');
+            browserContainer.classList.remove('active');
+            searchInput.value = '';
+            searchInput.focus();
+            history = [];
+            historyIndex = -1;
+            updateButtons();
+        }
+
+        // Main search form
+        document.getElementById('searchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            
+            if (query) {
+                loadUrl(query);
+            }
+        });
+
+        // URL bar enter key
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                navigateFromUrlBar();
+            }
         });
     </script>
 </body>
