@@ -603,7 +603,7 @@
             if (isValidURL(input)) {
                 targetUrl = input.startsWith('http') ? input : 'https://' + input;
             } else {
-                targetUrl = 'https://duckduckgo.com/?q=' + encodeURIComponent(input);
+                targetUrl = 'https://search.brave.com/search?q=' + encodeURIComponent(input);
             }
             
             const embedUrl = '/s/embed.html#' + targetUrl;
