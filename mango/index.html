@@ -21,7 +21,7 @@
         }
 
         .navbar {
-            background: rgba(10, 25, 41, 0.95);
+            background: rgba(10, 25, 41, 0.85);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -29,6 +29,27 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             border-bottom: 3px solid #1e5a9e;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.floating {
+            background: rgba(10, 25, 41, 0.75);
+            backdrop-filter: blur(15px);
+            margin: 1rem;
+            border-radius: 20px;
+            border: 3px solid #1e5a9e;
+            left: 0;
+            right: 0;
+            width: calc(100% - 2rem);
+        }
+
+        .navbar.floating.hidden {
+            transform: translateY(-150%);
         }
 
         .logo {
@@ -45,6 +66,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            cursor: pointer;
         }
 
         .logo img {
@@ -92,8 +114,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 90px);
+            min-height: 100vh;
             padding: 2rem;
+            padding-top: calc(90px + 2rem);
             transition: all 0.5s ease;
         }
 
@@ -185,33 +208,54 @@
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
         }
 
-        /* Browser Container */
         .browser-container {
             display: none;
-            flex-direction: column;
-            height: calc(100vh - 90px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: #0a1929;
         }
 
         .browser-container.active {
-            display: flex;
+            display: block;
+            pointer-events: none;
+        }
+        
+        .browser-container.active .browser-controls,
+        .browser-container.active ~ .navbar {
+            pointer-events: auto;
         }
 
         .browser-iframe {
-            flex: 1;
-            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            border: none;
             background: white;
+            pointer-events: auto;
         }
 
         .browser-controls {
-            background: rgba(10, 25, 41, 0.95);
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 25, 41, 0.75);
+            backdrop-filter: blur(15px);
             padding: 0.8rem 1.5rem;
             display: flex;
             gap: 1rem;
             align-items: center;
-            border-top: 3px solid #1e5a9e;
-            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            border: 3px solid #1e5a9e;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            z-index: 1001;
+            max-width: calc(100% - 2rem);
+            width: 800px;
         }
 
         .control-button {
@@ -277,6 +321,21 @@
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
         }
 
+        .mouse-detector {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            z-index: 999;
+            pointer-events: auto;
+            display: none;
+        }
+
+        .mouse-detector.active {
+            display: block;
+        }
+
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -305,6 +364,7 @@
             }
             to {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -341,6 +401,7 @@
                 flex-wrap: wrap;
                 gap: 0.5rem;
                 padding: 0.6rem 1rem;
+                width: calc(100% - 2rem);
             }
 
             .control-button {
@@ -351,7 +412,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="logo" onclick="goHome()">
             <img src="https://games-unite-v2.vercel.app/unite.png" alt="Logo"> Games Unite V2
         </div>
@@ -383,6 +444,8 @@
             </form>
         </div>
     </div>
+
+    <div class="mouse-detector" id="mouseDetector"></div>
 
     <div class="browser-container" id="browserContainer">
         <iframe id="browserIframe" class="browser-iframe"></iframe>
@@ -420,13 +483,67 @@
         const urlInput = document.getElementById('urlInput');
         const backBtn = document.getElementById('backBtn');
         const forwardBtn = document.getElementById('forwardBtn');
+        const navbar = document.getElementById('navbar');
+        const mouseDetector = document.getElementById('mouseDetector');
         
         let history = [];
         let historyIndex = -1;
+        let isBrowsingMode = false;
+        let hideTimeout;
+        let navbarVisible = true;
+        let isOverNavbar = false;
+        
+        function handleMouseMove(e) {
+            if (!isBrowsingMode) return;
+            
+            const mouseY = e.clientY;
+            
+            if (mouseY < 100) {
+                if (!navbarVisible) {
+                    navbar.classList.remove('hidden');
+                    navbarVisible = true;
+                }
+                clearTimeout(hideTimeout);
+            } else {
+                if (!isOverNavbar && navbarVisible) {
+                    clearTimeout(hideTimeout);
+                    hideTimeout = setTimeout(() => {
+                        if (!isOverNavbar) {
+                            navbar.classList.add('hidden');
+                            navbarVisible = false;
+                        }
+                    }, 800);
+                }
+            }
+        }
+        
+        window.addEventListener('mousemove', handleMouseMove);
+        mouseDetector.addEventListener('mousemove', handleMouseMove);
+
+        navbar.addEventListener('mouseenter', () => {
+            isOverNavbar = true;
+            clearTimeout(hideTimeout);
+            if (!navbarVisible && isBrowsingMode) {
+                navbar.classList.remove('hidden');
+                navbarVisible = true;
+            }
+        });
+
+        navbar.addEventListener('mouseleave', () => {
+            isOverNavbar = false;
+            if (!isBrowsingMode) return;
+            if (navbarVisible) {
+                hideTimeout = setTimeout(() => {
+                    if (!isOverNavbar) {
+                        navbar.classList.add('hidden');
+                        navbarVisible = false;
+                    }
+                }, 800);
+            }
+        });
 
         function isValidURL(string) {
             try {
-                // Check if it looks like a URL (has a domain with TLD)
                 const urlPattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:[0-9]+)?(\/.*)?$/;
                 const withProtocol = /^https?:\/\//;
                 
@@ -447,7 +564,6 @@
         }
 
         function addToHistory(url) {
-            // Remove any forward history when navigating to a new page
             history = history.slice(0, historyIndex + 1);
             history.push(url);
             historyIndex = history.length - 1;
@@ -482,26 +598,30 @@
         }
 
         function loadUrl(input, addHistory = true) {
-            let url;
+            let targetUrl;
             
             if (isValidURL(input)) {
-                // It's a valid URL
-                url = input.startsWith('http') ? input : 'https://' + input;
+                targetUrl = input.startsWith('http') ? input : 'https://' + input;
             } else {
-                // It's a search query - use DuckDuckGo
-                url = 'https://duckduckgo.com/?q=' + encodeURIComponent(input);
+                targetUrl = 'https://duckduckgo.com/?q=' + encodeURIComponent(input);
             }
             
-            browserIframe.src = url;
+            const embedUrl = '/s/embed.html#' + targetUrl;
+            browserIframe.src = embedUrl;
             urlInput.value = input;
             
             if (addHistory) {
-                addToHistory(url);
+                addToHistory(targetUrl);
             }
             
-            // Show browser, hide main content
             mainContent.classList.add('hidden');
             browserContainer.classList.add('active');
+            navbar.classList.add('floating');
+            mouseDetector.classList.add('active');
+            isBrowsingMode = true;
+            
+            navbar.classList.add('hidden');
+            navbarVisible = false;
         }
 
         function navigateFromUrlBar() {
@@ -514,14 +634,20 @@
         function goHome() {
             mainContent.classList.remove('hidden');
             browserContainer.classList.remove('active');
+            navbar.classList.remove('floating');
+            navbar.classList.remove('hidden');
+            mouseDetector.classList.remove('active');
+            isBrowsingMode = false;
+            navbarVisible = true;
+            isOverNavbar = false;
             searchInput.value = '';
             searchInput.focus();
             history = [];
             historyIndex = -1;
             updateButtons();
+            clearTimeout(hideTimeout);
         }
 
-        // Main search form
         document.getElementById('searchForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const query = searchInput.value.trim();
@@ -531,7 +657,6 @@
             }
         });
 
-        // URL bar enter key
         urlInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 navigateFromUrlBar();
