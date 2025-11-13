@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Apps - Games Unite V2</title>
+<link rel="icon" href="/assets/unite.png" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a1929 0%, #1a2f4a 50%, #0d1b2a 100%);
+    min-height: 100vh;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  .navbar {
+    background: rgba(10, 25, 41, 0.95);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border-bottom: 3px solid #1e5a9e;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #3b82f6;
+    text-shadow: 
+      3px 3px 0px #1e40af,
+      -1px -1px 0px #1e40af,
+      1px -1px 0px #1e40af,
+      -1px 1px 0px #1e40af,
+      1px 1px 0px #1e40af,
+      4px 4px 10px rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .logo img {
+    height: 40px;
+    width: 40px;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: #60a5fa;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    background: rgba(30, 90, 158, 0.3);
+    border: 2px solid #1e5a9e;
+    font-weight: 700;
+    text-shadow: 
+      2px 2px 0px #0a1929,
+      -1px -1px 0px #0a1929,
+      1px -1px 0px #0a1929,
+      -1px 1px 0px #0a1929,
+      1px 1px 0px #0a1929;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    background: rgba(59, 130, 246, 0.4);
+    border-color: #3b82f6;
+    color: #93c5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+
+  .content-wrapper {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 900;
+    color: #3b82f6;
+    text-shadow: 
+      4px 4px 0px #1e40af,
+      -2px -2px 0px #1e40af,
+      2px -2px 0px #1e40af,
+      -2px 2px 0px #1e40af,
+      2px 2px 0px #1e40af,
+      6px 6px 20px rgba(0, 0, 0, 0.8);
+  }
+
+  #searchBar {
+    width: 100%;
+    max-width: 600px;
+    padding: 1rem 1.5rem;
+    border: 4px solid #1e5a9e;
+    border-radius: 50px;
+    background: #1a2f4a;
+    color: #93c5fd;
+    font-size: 1.1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  #searchBar:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+  }
+
+  #searchBar::placeholder {
+    color: #475569;
+    font-weight: 600;
+  }
+
+  #container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .app-item {
+    background: rgba(30, 90, 158, 0.2);
+    border: 3px solid #1e5a9e;
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .app-item:hover {
+    transform: translateY(-8px);
+    border-color: #3b82f6;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.3);
+  }
+
+  .app-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    border-bottom: 3px solid #1e5a9e;
+  }
+
+  .app-item button {
+    padding: 1rem;
+    border: none;
+    background: transparent;
+    color: #93c5fd;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    text-shadow: 
+      2px 2px 0px #0a1929,
+      -1px -1px 0px #0a1929,
+      1px -1px 0px #0a1929,
+      -1px 1px 0px #0a1929,
+      1px 1px 0px #0a1929;
+  }
+
+  #fullscreenOverlay {
+    position: fixed;
+    inset: 0;
+    background: #0a1929;
+    display: none;
+    flex-direction: column;
+    z-index: 2000;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  #fullscreenHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(10, 25, 41, 0.95);
+    color: #93c5fd;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-bottom: 3px solid #1e5a9e;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .header-btn {
+    background: rgba(30, 90, 158, 0.5);
+    border: 2px solid #1e5a9e;
+    color: #60a5fa;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 700;
+  }
+
+  .header-btn:hover {
+    background: rgba(59, 130, 246, 0.5);
+    border-color: #3b82f6;
+    color: #93c5fd;
+    transform: translateY(-2px);
+  }
+
+  #appTitle {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #3b82f6;
+    text-shadow: 
+      3px 3px 0px #1e40af,
+      -1px -1px 0px #1e40af,
+      1px -1px 0px #1e40af,
+      -1px 1px 0px #1e40af,
+      1px 1px 0px #1e40af,
+      4px 4px 10px rgba(0, 0, 0, 0.8);
+  }
+
+  #appFullscreenFrame {
+    flex: 1;
+    width: 100%;
+    border: none;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      gap: 0.5rem;
+    }
+
+    .nav-links a {
+      padding: 0.5rem 0.8rem;
+    }
+
+    .nav-links a span {
+      display: none;
+    }
+
+    .navbar {
+      padding: 1rem;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    #container {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/" class="logo">
+    <img src="/assets/unite.png" alt="Logo"> Games Unite V2
+  </a>
+  <ul class="nav-links">
+    <li><a href="/"><i class="fas fa-home"></i><span>Home</span></a></li>
+    <li><a href="/games"><i class="fas fa-dice"></i><span>Games</span></a></li>
+    <li><a href="/apps" class="active"><i class="fas fa-rocket"></i><span>Apps</span></a></li>
+    <li><a href="/settings"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+    <li><a href="/more"><i class="fas fa-ellipsis-h"></i><span>More</span></a></li>
+  </ul>
+</nav>
+
+<div class="content-wrapper">
+  <h1 class="page-title">Apps</h1>
+  <input type="text" id="searchBar" placeholder="Search apps..." oninput="filterApps()">
+  <div id="container">Loading...</div>
+</div>
+
+<div id="fullscreenOverlay">
+  <div id="fullscreenHeader">
+    <h2 id="appTitle">App Title</h2>
+    <div>
+      <button id="fullscreenBtn" class="header-btn" title="Fullscreen">
+        <i class="fas fa-expand"></i>
+      </button>
+      <button id="closeFullscreen" class="header-btn" title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+  <iframe id="appFullscreenFrame"></iframe>
+</div>
+
+<script>
+const container = document.getElementById('container');
+const searchBar = document.getElementById('searchBar');
+const overlay = document.getElementById('fullscreenOverlay');
+const iframe = document.getElementById('appFullscreenFrame');
+const closeBtn = document.getElementById('closeFullscreen');
+const appTitle = document.getElementById('appTitle');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+const apps = [
+  {
+    name: "Discord",
+    image: "https://cdn.jsdelivr.net/gh/Darkdragonzxs/dominum@main/assets/images/apps/discord.png",
+    url: "/s/embed.html#https://discord.com/login"
+  },
+  {
+    name: "Snapchat",
+    image: "https://cdn.jsdelivr.net/gh/Darkdragonzxs/dominum@main/assets/images/apps/snapchat.png",
+    url: "/s/embed.html#https://snapchat.com"
+  },
+  {
+    name: "Soundcloud",
+    image: "https://cdn.jsdelivr.net/gh/Darkdragonzxs/dominum@main/assets/images/apps/soundcloud.png",
+    url: "/s/embed.html#https://soundcloud.com"
+  },
+  {
+    name: "Tiktok",
+    image: "https://cdn.jsdelivr.net/gh/Darkdragonzxs/dominum@main/assets/images/apps/tiktok.png",
+    url: "/s/embed.html#https://invidious.nerdvpn.de"
+  },
+  {
+    name: "Invidious",
+    image: "https://cdn.jsdelivr.net/gh/Darkdragonzxs/dominum@main/assets/images/apps/invidious.png",
+    url: "/s/embed.html#https://invidious.nerdvpn.de"
+  },
+  {
+    name: "Roblox",
+    image: "https://cdn.jsdelivr.net/gh/Darkdragonzxs/Calc-Flood@main/pedos.png",
+    url: "/s/embed.html#https://nowgg.fun/apps/a/19900/b.html"
+  },
+  {
+    name: "VScode",
+    image: "https://raw.githubusercontent.com/Darkdragonzxs/gamesunite/refs/heads/main/assets/vscode.png",
+    url: "/s/embed.html#https://vscode.dev"
+  },
+  {
+    name: "Instagram",
+    image: "https://raw.githubusercontent.com/Darkdragonzxs/dominum/refs/heads/main/assets/images/apps/instagram.png",
+    url: "/s/embed.html#https://instagram.com"
+  },
+  {
+    name: "Luna",
+    image: "https://raw.githubusercontent.com/Darkdragonzxs/luna/refs/heads/main/luna.png",
+    url: "/s/embed.html#https://luna.loan"
+  }
+];
+
+function displayApps() {
+  container.innerHTML = '';
+  apps.forEach(app => {
+    const item = document.createElement('div');
+    item.className = 'app-item';
+    const img = document.createElement('img');
+    img.src = app.image;
+    img.alt = app.name;
+    img.loading = 'lazy';
+    const btn = document.createElement('button');
+    btn.textContent = app.name;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      openApp(app);
+    };
+    item.onclick = () => openApp(app);
+    item.appendChild(img);
+    item.appendChild(btn);
+    container.appendChild(item);
+  });
+}
+
+function filterApps() {
+  const query = searchBar.value.toLowerCase();
+  const filtered = apps.filter(app => app.name.toLowerCase().includes(query));
+  displayFiltered(filtered);
+}
+
+function displayFiltered(filteredApps) {
+  container.innerHTML = '';
+  if (filteredApps.length === 0) {
+    container.innerHTML = '<p style="color: #60a5fa; font-size: 1.2rem;">No apps found.</p>';
+    return;
+  }
+  filteredApps.forEach(app => {
+    const item = document.createElement('div');
+    item.className = 'app-item';
+    const img = document.createElement('img');
+    img.src = app.image;
+    img.alt = app.name;
+    img.loading = 'lazy';
+    const btn = document.createElement('button');
+    btn.textContent = app.name;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      openApp(app);
+    };
+    item.onclick = () => openApp(app);
+    item.appendChild(img);
+    item.appendChild(btn);
+    container.appendChild(item);
+  });
+}
+
+function openApp(app) {
+  overlay.style.display = 'flex';
+  appTitle.textContent = app.name;
+  iframe.src = app.url;
+}
+
+closeBtn.onclick = () => {
+  overlay.style.display = 'none';
+  iframe.src = '';
+};
+
+fullscreenBtn.onclick = () => {
+  iframe.requestFullscreen().catch(() => alert('Fullscreen mode is not supported or blocked.'));
+};
+
+displayApps();
+</script>
+</body>
+</html>
